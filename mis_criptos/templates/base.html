@@ -1,0 +1,27 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mis criptos - {{title}}</title>
+        <link rel="stylesheet" href="/static/pico.css">
+    </head>
+    <body>
+        <header id="header">
+            <p class="container">Mis criptos</p>
+        </header>
+        
+        <nav class="container">
+            <ul>
+                <li><a href="/">Mis movimientos</a></li>
+                <li><a href="/purchase">Crypto Trading</a></li>
+                <li><a href="/status">Wallet</a></li>
+            </ul>
+        </nav>
+        <main class="container">
+            {% block content %}{%endblock%}
+        </main>
+        <footer>
+            <p class="container">&copy; 2023  -  Carles Espuñes</p>
+        </footer>
+    </body>
+</html>
