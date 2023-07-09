@@ -4,15 +4,31 @@
     <div>
         <h1>Mis movimientos</h1>
     </div>
-    <table>
-        <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>From</th>
-            <th>Q</th>
-            <th>To</th>
-            <th>Q</th>
-            <th>P.U</th>
-        </tr>
-    </table>
+
+    {% if movements != [] %}
+        <table>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>From</th>
+                <th>Q</th>
+                <th>To</th>
+                <th>Q</th>
+                <th>P.U</th>
+            </tr>
+            {% for movement in movements %}
+            <tr>
+                <td>{{ movement.date }}</td>
+                <td>{{ movement.time }}</td>
+                <td>{{ movement.moneda_from }}</td>
+                <td>{{ movement.cantidad_from }}</td>
+                <td>{{ movement.moneda_to }}</td>
+                <td>{{ movement.cantidad_to }}</td>
+                <td>{% if movement.moneda_from == "EUR" %} {% if (movement.cantidad_from / movement.cantidad_to).is_integer() %}  {{ (movement.cantidad_from / movement.cantidad_to)| int }} {% else %} {{ (movement.cantidad_from / movement.cantidad_to)| float | round(2) }} {% endif %} € {% else %} {{ (movement.cantidad_from / movement.cantidad_to) | round(5) }} {{ movement.moneda_from }} {% endif %}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>SIN MOVIMIENTOS</p>
+    {% endif %}
 {%endblock%}

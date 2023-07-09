@@ -1,0 +1,6 @@
+a.deactivate {
+    pointer-events: none;  /*  no ejecuta los eventos del puntero */
+    color: gray;  /* cambia color de texto */
+    text-decoration: none;  /* saca el subrayado */
+    cursor: default; /* no cambia a la mano */
+}

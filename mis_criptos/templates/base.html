@@ -4,6 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mis criptos - {{title}}</title>
         <link rel="stylesheet" href="/static/pico.css">
+        <link rel="stylesheet" href="/static/styles.css">
     </head>
     <body>
         <header id="header">
@@ -12,9 +13,9 @@
         
         <nav class="container">
             <ul>
-                <li><a href="/">Mis movimientos</a></li>
-                <li><a href="/purchase">Crypto Trading</a></li>
-                <li><a href="/status">Wallet</a></li>
+                <li><a href="{{ url_for('index') }}" {% if route == "/" %} class="deactivate" {% endif %}>Mis movimientos</a></li>
+                <li><a href="{{ url_for('trading') }}" {% if route == "/purchase" %} class="deactivate" {% endif %}>Trading</a></li>
+                <li><a href="{{ url_for('wallet') }}" {% if route == "/status" %} class="deactivate" {% endif %}>Wallet</a></li>
             </ul>
         </nav>
         <main class="container">
