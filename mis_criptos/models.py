@@ -24,7 +24,7 @@ class Movement:
 
 
 
-class CryptosDAOsqlite:
+class CryptosDAOsqlite: #data acces object (para guardar los datos)
     def __init__(self, db_path):
         self.path=db_path
 
@@ -38,12 +38,12 @@ class CryptosDAOsqlite:
         "cantidad_to"	REAL NOT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
         )
-        """
+        """#el if not exist hace que la crea si aún no existe
 
-        conn=sqlite3.connect(self.path)
-        cur=conn.cursor()
-        cur.execute(query)
-        conn.close()
+        conn=sqlite3.connect(self.path)# establece la conexión con la BD, si el fichero no existe lo crea.
+        cur=conn.cursor()#es el objeto que permite manipular la BD 
+        cur.execute(query)# el execute crea la tabla en la BD con los valores del create, que los habíamos guardado en la variable query
+        conn.close()#cerrar siempre la conexión para liberar recursos y evitar problemas
 
 
     def get_all(self):
@@ -54,9 +54,9 @@ class CryptosDAOsqlite:
         conn=sqlite3.connect(self.path)
         cur=conn.cursor()
         cur.execute(query)
-        res=cur.fetchall()
+        res=cur.fetchall() # devuelve una lista de tuplas con la resta de la consulta 
 
-        lista = [Movement(*reg) for reg in res]
+        lista = [Movement(*reg) for reg in res]# crea una lista con primero lo que se quiere añadir y luego lo que se recorre  esto se llama LIST COMPREHENSION
 
         conn.close()
         return lista

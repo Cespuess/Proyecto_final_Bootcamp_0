@@ -5,8 +5,35 @@
             <h1>Crypto Trading</h1>
         </div>
 
-        <form action="/purchase" method="post">
-            
+        <form action="/purchase" method="post"><!--el action lo manda a la misma página, así cuando llega con datos se manda a la base de datos, se hace un formulario con el método post para que cree un nuevo dato en la base de datos-->
+            {{form.csrf_token}}<!-- es de type="hidden"(oculto) sino está informado no lo pinta, y hay que ponerlo siempre para que viaje el formulario-->
+            {{form.h_from}}
+            {{form.h_to}}
+            {{form.h_q}}
+
+            <div class="grid">
+                <div>
+                {{ form.m_from.label }} {{ form.m_from }} 
+                </div>
+                <div>
+                    {{ form.m_to.label}} {{ form.m_to }}
+                </div>
+            </div>
+            <div class="grid">
+                <div>
+                    {{ form.q_from.label }}   {{ form.q_from }}
+                </div>            
+                <div>
+                     {{ form.calculate }}
+                </div>
+                <div>
+                    <p>Q:</p>
+                </div>
+            </div>
+            <div>
+                {{ form.buy }}
+            </div>
+
         </form>
 
     {% endblock %}

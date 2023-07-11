@@ -13,11 +13,21 @@
         
         <nav class="container">
             <ul>
-                <li><a href="{{ url_for('index') }}" {% if route == "/" %} class="deactivate" {% endif %}>Mis movimientos</a></li>
+                <li><a href="{{ url_for('index') }}" {% if route == "/" %} class="deactivate" {% endif %}>Mis movimientos</a></li> <!--hacemos el if para si está en esa url se convierte en clase deactivate y se anula el link-->
                 <li><a href="{{ url_for('trading') }}" {% if route == "/purchase" %} class="deactivate" {% endif %}>Trading</a></li>
                 <li><a href="{{ url_for('wallet') }}" {% if route == "/status" %} class="deactivate" {% endif %}>Wallet</a></li>
             </ul>
         </nav>
+        {% with msgs = get_flashed_messages() %}
+            {% if msgs %}
+                <div>
+                {%for msg in msgs %}
+                <p>{{msg}}</p>
+                {% endfor %}
+                </div> 
+            {% endif %} 
+        {% endwith %}
+
         <main class="container">
             {% block content %}{%endblock%}
         </main>
