@@ -1,7 +1,5 @@
 from mis_criptos import app
 import sqlite3
-import os
-from datetime import date, time 
 import requests
 
 
@@ -43,7 +41,7 @@ class Api:
             data = response.json()# hemos creado un diccionario con el texto de la respuesta del json
 
             if response.status_code == 200: # pedimos el código de respuesta para estar seguros de que si la petición ha ido bien poder hacer los cálculos necesarios
-                self.quantity_to = data["rate"] * self.quantity_from
+                self.quantity_to = self.quantity_from * data["rate"] 
                 self.date, self.time = self.get_time(data["time"])
                 print(self.date, self.time)
             else:
@@ -56,8 +54,6 @@ class Api:
         d= cadena[:10]
         t= cadena[11:19]
         return d, t
-
-
 
 class CryptosDAOsqlite: #data acces object (para guardar los datos)
     def __init__(self, db_path):
@@ -105,3 +101,5 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         cur.execute(query, (movement.date, movement.time, movement.moneda_from, movement.cantidad_from, movement.moneda_to, movement.cantidad_to))
         conn.commit()
         conn.close()
+
+

@@ -46,6 +46,8 @@ def trading():
             return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
         
         else:
+            for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
+                flash(msg[0])#los grabamos uno x uno en flash
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 
     else:
@@ -60,7 +62,7 @@ def trading():
 
                     return redirect("/") # nos devuelve a la página inicial que nos muestra los movimientos
                 
-                except ValueError as e:
+                except ValueError as e: # por si el movimiento no se crea correctamente 
                     flash(str(e))
                     return render_template('purchase.html', form=form, route=request.path,title="Trading")
 
