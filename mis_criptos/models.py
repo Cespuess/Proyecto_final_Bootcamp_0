@@ -1,6 +1,10 @@
+from mis_criptos import app
 import sqlite3
 import os
 from datetime import date, time 
+import requests
+
+
 
 class Movement:
     def __init__(self, input_date, time, moneda_from, cantidad_from, moneda_to, cantidad_to, id=None):
@@ -21,6 +25,37 @@ class Movement:
     
     def __str__(self):
         return self.__repr__()
+
+class Api:
+    def __init__(self):
+        pass
+
+    def get_rate(self, moneda_from, moneda_to, quantity):
+        self.moneda_from = moneda_from
+        self.moneda_to = moneda_to
+        self.quantity_from = quantity
+        self.error = False
+        self.url = f'https://rest.coinapi.io/v1/exchangerate/{self.moneda_from}/{self.moneda_to}?apikey={app.config.get("API_KEY")}'
+
+
+        try:
+            response = requests.get(self.url)#se ejecuta la petición
+            data = response.json()# hemos creado un diccionario con el texto de la respuesta del json
+
+            if response.status_code == 200: # pedimos el código de respuesta para estar seguros de que si la petición ha ido bien poder hacer los cálculos necesarios
+                self.quantity_to = data["rate"] * self.quantity_from
+                self.date, self.time = self.get_time(data["time"])
+                print(self.date, self.time)
+            else:
+                self.error = data["error"] 
+
+        except requests.exceptions.RequestException as e:
+            self.error = str(e)
+
+    def get_time(self, cadena): # recorremos la cadena para separar fecha y tiempo de la llamada a la API
+        d= cadena[:10]
+        t= cadena[11:19]
+        return d, t
 
 
 
@@ -55,9 +90,18 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         cur=conn.cursor()
         cur.execute(query)
         res=cur.fetchall() # devuelve una lista de tuplas con la resta de la consulta 
-
+        print(res)
         lista = [Movement(*reg) for reg in res]# crea una lista con primero lo que se quiere añadir y luego lo que se recorre  esto se llama LIST COMPREHENSION
 
         conn.close()
         return lista
 
+    def insert(self, movement):
+        query= """
+        INSERT INTO movements (date, time, moneda_from, cantidad_from, moneda_to, cantidad_to) VALUES (?,?,?,?,?,?)
+        """
+        conn= sqlite3.connect(self.path)
+        cur = conn.cursor()
+        cur.execute(query, (movement.date, movement.time, movement.moneda_from, movement.cantidad_from, movement.moneda_to, movement.cantidad_to))
+        conn.commit()
+        conn.close()

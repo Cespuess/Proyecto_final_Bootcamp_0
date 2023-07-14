@@ -10,6 +10,9 @@
             {{form.h_from}}
             {{form.h_to}}
             {{form.h_q}}
+            {{form.h_q_to}}
+            {{form.h_date}}
+            {{form.h_time}}
 
             <div class="grid">
                 <div>
@@ -27,7 +30,7 @@
                      {{ form.calculate }}
                 </div>
                 <div>
-                    <p>Q:</p>
+                    <p>Q: {% if form.calculate.data %} {{ form.h_q_to.data}} {{form.m_to.data}}{%endif%}</p>
                 </div>
             </div>
             <div>
