@@ -4,7 +4,7 @@ from wtforms import FloatField, SelectField, SubmitField, HiddenField
 from wtforms.validators import ValidationError, DataRequired
 from mis_criptos.models import CryptosDAOsqlite
 
-daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
+daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE"))#lo instanciamos en forms para poder hacer consultas en la BD
 
 CRYPTOS = [("EUR","EUR"), ("BTC", "BTC"),("ETH", "ETH"), ("USDT","USDT"), ("BNB", "BNB"), ("XRP", "XRP"), ("ADA", "ADA"), ("SOL", "SOL"), ("DOT", "DOT"), ("MATIC", "MATIC")]
 
@@ -27,32 +27,40 @@ class CryptoForm(FlaskForm):
     buy = SubmitField("Comprar")
     #hemos creado un formulario con WTForm con los campor requeridos con los validadores y los errores que se muestran al ponerlo mal, sinó podemos nada de mensaje se mostrará uno estándar en inglés. NO OLVIDAR DE IMPORTAR TOT
 
-    '''
-    def validate_m_from(self, field):
+    
+    def validate_m_from(self, field):#controlamos tener movimientos de esa cripto y si hay también que la cantidad sea mayor que 0
         if field.data !="EUR":
-            res, lista = daoform.get_all
             q_from = 0
             q_to = 0
-            for m in lista:
-                if field.data in m.moneda_from:
-                    q_from += m.cantidad_from
-                if field.data in m.moneda_to:
-                    q_to += m.cantidad_to
-            total = q_to - q_from
-            if total == 0:
+            self.total=0
+            lista_to = daoform.quantity_to(field.data)
+            if lista_to == []:
                 raise ValidationError(f"No dispones de {field.data} para vender")
-    '''     
+            else:                
+                for m in lista_to:
+                    q_to += m[1]
+                
+            lista_from = daoform.quantity_from(field.data)  
+            if lista_from == []:
+                pass
+            else:
+                for m in lista_from:
+                    q_from += m[1]   
 
-
+            self.total = q_to - q_from#guardo el total de lo comprado - lo vendido para saber la cantidad que me queda
+            if self.total == 0:
+                raise ValidationError(f"No dispones de {field.data} para vender")
+ 
     def validate_m_to(self, field):# al estar dentro de la clase no hace falta llamarla, la ejecuta automáticamente por llamarse validate_  y luego el nombre de la variable
         if self.m_from.data == "EUR" and field.data != "BTC":
             raise ValidationError("Solo puedes comprar BTC con Euros")
-        
 
-
-        
     def validate_q_from(self, field):
         if field.data <= 0:
             raise ValidationError("Introduce una cantidad positiva")
+        
+        if self.m_from.data != "EUR" and self.total != 0:
+            if field.data > self.total:#si la cantidad introducida es mayor a la cantidad de la que dispongo no me dejará vender
+                raise ValidationError(f"No tienes suficientes {self.m_from.data} para vender")
 
     

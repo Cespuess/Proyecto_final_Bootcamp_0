@@ -48,11 +48,12 @@ def trading():
         else:
             for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
                 flash(msg[0])#los grabamos uno x uno en flash
+            form.h_q_to.data = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 
     else:
         if form.h_from.data != form.m_from.data or form.h_to.data != form.m_to.data or form.h_q.data != str(form.q_from.data): #si alguno ha sido modificado lanzamos un mensaje de error
-            flash("No modifiques los datos del cálculo antes de validar la compra.")
+            flash("No modifiques los datos del cálculo antes de validar la compra. Vuelve a calcular la operación deseada.")
             return render_template("purchase.html", form=form)
         else: 
             if form.validate():

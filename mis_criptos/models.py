@@ -1,7 +1,7 @@
 from mis_criptos import app
 import sqlite3
 import requests
-
+from decimal import Decimal #importamos para que no nos dé el error al comprar pequeñas cantidades ej:0.0000042 evitará que sea 4.2
 
 
 class Movement:
@@ -41,9 +41,11 @@ class Api:
             data = response.json()# hemos creado un diccionario con el texto de la respuesta del json
 
             if response.status_code == 200: # pedimos el código de respuesta para estar seguros de que si la petición ha ido bien poder hacer los cálculos necesarios
-                self.quantity_to = self.quantity_from * data["rate"] 
+                rate = Decimal(data["rate"])
+                print(rate)
+                self.quantity_to = Decimal(self.quantity_from) * rate
                 self.date, self.time = self.get_time(data["time"])
-                print(self.date, self.time)
+                
             else:
                 self.error = data["error"] 
 
@@ -66,7 +68,7 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         "moneda_from"	TEXT NOT NULL,
         "cantidad_from"	REAL NOT NULL,
         "moneda_to"	TEXT NOT NULL,
-        "cantidad_to"	REAL NOT NULL,
+        "cantidad_to"	NUMERIC NOT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
         )
         """#el if not exist hace que la crea si aún no existe
@@ -86,7 +88,6 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         cur=conn.cursor()
         cur.execute(query)
         res=cur.fetchall() # devuelve una lista de tuplas con la resta de la consulta 
-        print(res)
         lista = [Movement(*reg) for reg in res]# crea una lista con primero lo que se quiere añadir y luego lo que se recorre  esto se llama LIST COMPREHENSION
 
         conn.close()
@@ -101,5 +102,31 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         cur.execute(query, (movement.date, movement.time, movement.moneda_from, movement.cantidad_from, movement.moneda_to, movement.cantidad_to))
         conn.commit()
         conn.close()
+
+    def quantity_to(self,currency):
+        query= """
+        SELECT moneda_to, cantidad_to FROM movements
+        WHERE moneda_to = ?
+        """
+
+        conn = sqlite3.connect(self.path)
+        cur = conn.cursor()
+        cur.execute(query, (currency,))
+        res = cur.fetchall()
+        conn.close()
+        return res
+    
+    def quantity_from(self,currency):
+        query= """
+        SELECT moneda_from, cantidad_from FROM movements
+        WHERE moneda_from = ?
+        """
+
+        conn = sqlite3.connect(self.path)
+        cur = conn.cursor()
+        cur.execute(query, (currency,))
+        res = cur.fetchall()
+        conn.close()
+        return res
 
 
