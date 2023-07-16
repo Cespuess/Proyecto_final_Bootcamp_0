@@ -5,5 +5,24 @@
     <div>
         <h1>Wallet</h1>
     </div>
-
+    {% if lista != [] %}
+        <table>
+            <tr>
+                <th>Moneda</th>
+                <th>Cantidad</th>
+                <th>Valor en euros</th>
+                
+            </tr>
+            {% for valores in lista %}
+            <tr>
+                <td>{{ valores[0] }}</td>
+                <td>{{ valores[1] }}</td>
+                
+               
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>NO HAS EFECTUADO AÚN NINGUNA COMPRA</p><!--si está vacio muestra sin movimientos-->
+    {% endif %}
 {% endblock %}

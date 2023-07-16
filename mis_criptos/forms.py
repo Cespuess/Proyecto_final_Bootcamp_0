@@ -34,18 +34,16 @@ class CryptoForm(FlaskForm):
             q_to = 0
             self.total=0
             lista_to = daoform.quantity_to(field.data)
-            if lista_to == []:
+            if lista_to == [(None,None)]:
                 raise ValidationError(f"No dispones de {field.data} para vender")
             else:                
-                for m in lista_to:
-                    q_to += m[1]
+                q_to += lista_to[0][1]
                 
             lista_from = daoform.quantity_from(field.data)  
-            if lista_from == []:
+            if lista_from == [(None,None)]:
                 pass
             else:
-                for m in lista_from:
-                    q_from += m[1]   
+                q_from += lista_from[0][1]   
 
             self.total = q_to - q_from#guardo el total de lo comprado - lo vendido para saber la cantidad que me queda
             if self.total == 0:

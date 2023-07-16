@@ -1,6 +1,6 @@
 from mis_criptos import app
 from flask import render_template, redirect, request, url_for, flash
-from mis_criptos.models import Movement, CryptosDAOsqlite, Api
+from mis_criptos.models import Movement, CryptosDAOsqlite, Api, Status
 from mis_criptos.forms import CryptoForm
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
@@ -74,4 +74,9 @@ def trading():
 
 @app.route("/status")
 def wallet():
-    return render_template("status.html", route=request.path, title="Status")
+    api=Api()
+    status = Status(dao)
+    lista_cantidad=status.get_status()
+    lista_status=api.get_value_eur(lista_cantidad)
+
+    return render_template("status.html", route=request.path, title="Status", lista=lista_status)
