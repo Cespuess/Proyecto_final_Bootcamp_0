@@ -1,6 +1,72 @@
+:root{
+    --primario: rgb(113, 212, 171);
+    --primarioOscuro: rgb(39, 100, 75);
+    --primarioOpaco: rgba(113, 212, 171, 0.5);
+    --error: rgb(247, 165, 165);
+    --errorOscuro: rgb(245, 53, 53);
+    --fondo: rgb(253, 241, 241);
+    
+}
+body{
+    background: url(/static/images/cryptos.png) no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+
+
+
 a.deactivate {
     pointer-events: none;  /*  no ejecuta los eventos del puntero */
     color: gray;  /* cambia color de texto */
     text-decoration: none;  /* saca el subrayado */
     cursor: default; /* no cambia a la mano */
+}
+
+.title{
+    text-align: center;
+    background-color: var(--primarioOpaco);
+    border: solid 0.1rem var(--primarioOscuro);
+    border-radius: 0.5rem;
+    -webkit-box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
+    -moz-box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
+    box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
+    height: 65px;
+    margin:0.3rem 0rem;
+}
+
+
+
+#errores {
+    display: flex;   
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    background-color: var(--error);
+    border: 0.3rem double var(--errorOscuro);
+    border-radius: 0.5rem; 
+    
+}
+
+#errores p {
+    color: var(--errorOscuro);
+    }
+
+header, footer {
+    background-color:var(--primario);
+        
+}
+
+footer{
+    margin-bottom:0px;
+}
+
+header p, footer p{
+    color:var(--primarioOscuro);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+h1{
+    color:var(--primarioOscuro)
 }

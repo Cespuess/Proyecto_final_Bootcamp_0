@@ -76,7 +76,10 @@ def trading():
 def wallet():
     api=Api()
     status = Status(dao)
-    lista_cantidad=status.get_status()
-    lista_status=api.get_value_eur(lista_cantidad)
-
-    return render_template("status.html", route=request.path, title="Status", lista=lista_status)
+    lista_cantidad=api.get_value_eur(status.get_status())
+    
+    if api.error:#solo entra si hay contenido en api.error
+                flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
+                return render_template('status.html', route=request.path,title="Status", error=True)
+    
+    return render_template("status.html", route=request.path, title="Status", lista=lista_cantidad, error = False)

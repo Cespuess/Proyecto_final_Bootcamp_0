@@ -2,27 +2,39 @@
 
 {% block content %}
 
-    <div>
+    <div class="title" >
         <h1>Wallet</h1>
     </div>
-    {% if lista != [] %}
-        <table>
-            <tr>
-                <th>Moneda</th>
-                <th>Cantidad</th>
-                <th>Valor en euros</th>
-                
-            </tr>
-            {% for valores in lista %}
-            <tr>
-                <td>{{ valores[0] }}</td>
-                <td>{{ valores[1] }}</td>
-                
-               
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>NO HAS EFECTUADO AÚN NINGUNA COMPRA</p><!--si está vacio muestra sin movimientos-->
-    {% endif %}
+        {% if error == False%}<!--solo se mostrará la tabla si no hay errores-->
+            {% if lista != [["EUR",0]] %} <!--solo si hay movimientos -->
+                <table>
+                    <tr>
+                        <th>Moneda</th>
+                        <th>Cantidad</th>
+                        <th>Valor en euros</th>
+                    </tr>
+                    {% set total = [] %}<!--creamos una variable con el total y los euros-->
+                    {% set euros = [] %}
+                    {% for valores in lista %}
+                        <tr>
+                            {% if valores[0] != "EUR"%}
+                                <td>{{ valores[0] }}</td>
+                                <td>{{ valores[1] }} {{valores[0]}} </td>
+                                <td>{% if valores[2].is_integer() %}  {{ valores[2]| int }} {% else %} {{ valores[2]| float | round(2) }} {% endif %} €</td>
+                            </tr>
+                                {% set _ = total.append(valores[2]) %}<!--añadimos los valores en euros en la lista total, el _ es para que no se queden guardados en ninguna variable -->
+                            {%else%}    {% set _ = euros.append(valores[1]) %}<!--añadimos el valor total de euros retenidos en la lista euros -->
+                            {%endif%}
+                    {% endfor %}
+                </table>
+                <div>
+                    <p>Valor actual: {{ (total|sum) | float | round(2) }}€ </p><!--total|sum sumará todos los valores que haya en la tabla-->
+                    <p>Precio de compra: {{ euros[0] | float | round(2) }}€</p>
+                    <p>Resultado de la inversión: {{ ((total|sum) + euros[0]) | float| round(2) }}€</p>
+                </div>
+            {% else %}<!--si no hay movimientos mostrará este mensaje-->
+                <p>NO HAS EFECTUADO AÚN NINGUNA COMPRA</p><!--si está vacio muestra sin movimientos-->
+            {% endif %}
+        {%endif%}
+
 {% endblock %}
