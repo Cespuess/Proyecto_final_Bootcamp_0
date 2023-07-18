@@ -53,6 +53,21 @@ a.deactivate {
     color: var(--errorOscuro);
     }
 
+.sin-mov{
+    margin-left:auto;
+    margin-right:auto;
+    width: 50%;
+    margin-bottom: 1.5rem;
+    }
+
+.sin-mov p {
+    text-align: center;
+    color: var(--errorOscuro);
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0;
+}
+
 header, footer {
     background-color:var(--primario);
         

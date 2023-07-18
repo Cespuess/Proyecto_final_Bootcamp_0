@@ -31,7 +31,8 @@
                      {{ form.calculate }}
                 </div>
                 <div>
-                    <p>Q: {% if form.calculate.data and form.h_q_to.data != "" %} {{ form.h_q_to.data}} {{form.m_to.data}}{%endif%}</p>
+                    <p>Q: {% if form.calculate.data and form.h_q_to.data != "" %}
+                        {%if form.m_to.data == "EUR" %} {{ "%.2f"| format(form.h_q_to.data)}}€ {% else %} {{ form.h_q_to.data}} {{form.m_to.data}} {%endif%} {%endif%}</p>
                 </div>
             </div>
             <div>

@@ -70,7 +70,7 @@ class Api:
             response = requests.get(url)
             data = response.json()
             if response.status_code == 200:
-                if data["rates"] != []:
+                if data["rates"] != []:#si alguien modifica la parte EUR de la url esto ayudará a que no pete la app
                     for lista_currency in lista:#recorremos moneda por moneda de las que tenemos
                         for cripto in data["rates"]: # recorremos las monedas de la solicitud API
                             if lista_currency[0] == cripto["asset_id_quote"]: #a la que encuentra la información de nuestra moneda dividimos nuestra cantidad por el rate para obtener nuestro valor en euros y lo añadimos en la lista ["ADA",25,55]

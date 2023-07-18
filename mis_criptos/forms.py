@@ -4,7 +4,7 @@ from wtforms import FloatField, SelectField, SubmitField, HiddenField
 from wtforms.validators import ValidationError, DataRequired
 from mis_criptos.models import CryptosDAOsqlite
 
-daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE"))#lo instanciamos en forms para poder hacer consultas en la BD
+daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE_V"))#lo instanciamos en forms para poder hacer consultas en la BD
 
 CRYPTOS = [("EUR","EUR"), ("BTC", "BTC"),("ETH", "ETH"), ("USDT","USDT"), ("BNB", "BNB"), ("XRP", "XRP"), ("ADA", "ADA"), ("SOL", "SOL"), ("DOT", "DOT"), ("MATIC", "MATIC")]
 

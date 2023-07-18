@@ -2,8 +2,9 @@ from mis_criptos import app
 from flask import render_template, redirect, request, url_for, flash
 from mis_criptos.models import Movement, CryptosDAOsqlite, Api, Status
 from mis_criptos.forms import CryptoForm
+import sqlite3
 
-dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
+dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE_V"))
 
 @app.route("/")
 def index():
@@ -11,7 +12,7 @@ def index():
     try:
         movements= dao.get_all()
         return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path)#el route lo pasamos para usarlo para desactivar el link del nav, el request.path devuelvela parte de la URL después del nombre de dominio.
-    except ValueError as e:
+    except (ValueError, sqlite3.OperationalError) as e:
         flash("Su fichero de datos está corrupto")
         flash(str(e))
         return render_template("index.html", movements=[], title="Mis Movimientos")
@@ -34,7 +35,7 @@ def trading():
             except (AttributeError, NameError) as e:
                 api.error = str(e)
             
-            if api.error != False:#solo entra si hay contenido en api.error
+            if api.error:#solo entra si hay contenido en api.error
                 flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
                 return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
             
@@ -71,7 +72,11 @@ def trading():
                     return render_template('purchase.html', form=form, route=request.path,title="Trading")
 
             else:
-                return render_template('purchase.html', form=form, route=request.path,title="Trading")
+                for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
+                    flash(msg[0])#los grabamos uno x uno en flash
+                form.h_q_to.data = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
+                return render_template("purchase.html", form=form, route=request.path, title="Trading")
+                
 
 
 
@@ -79,10 +84,15 @@ def trading():
 def wallet():
     api=Api()
     status = Status(dao)
-    lista_cantidad=api.get_value_eur(status.get_status())
+    try:
+        lista_cantidad=api.get_value_eur(status.get_status())
+        
+        if api.error:#solo entra si hay contenido en api.error
+                    flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
+                    return render_template('status.html', route=request.path,title="Wallet", error=True)
+        
+        return render_template("status.html", route=request.path, title="Wallet", lista=lista_cantidad, error = False)
     
-    if api.error:#solo entra si hay contenido en api.error
-                flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
-                return render_template('status.html', route=request.path,title="Status", error=True)
-    
-    return render_template("status.html", route=request.path, title="Status", lista=lista_cantidad, error = False)
+    except (AttributeError, sqlite3.OperationalError) as e:#controlamos errores generados por el usuario cabrón
+        flash(str(e))
+        return render_template("status.html", route=request.path, title="Wallet", error=True)
