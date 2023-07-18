@@ -46,7 +46,16 @@ class Api:
                 print(rate)
                 self.quantity_to = Decimal(self.quantity_from) * rate
                 self.date, self.time = self.get_time(data["time"])
-                
+            elif response.status_code == 400: 
+                self.error = "Solicitud incorrecta: hay algún problema con su solicitud"
+            elif response.status_code == 401: 
+                self.error = "API KEY incorrecta"
+            elif response.status_code == 403: 
+                self.error = "API KEY sin suficientes recursoso para acceder al recurso solicitado"
+            elif response.status_code == 429: 
+                self.error = "Límite de solicitudes excedido"
+            elif response.status_code == 550: 
+                self.error = "Sin datos: no disponemos el artículo que nos solicitó en este momento"  
             else:
                 self.error = data["error"] 
 
@@ -61,11 +70,15 @@ class Api:
             response = requests.get(url)
             data = response.json()
             if response.status_code == 200:
-                for lista_currency in lista:#recorremos moneda por moneda de las que tenemos
-                    for cripto in data["rates"]: # recorremos las monedas de la solicitud API
-                        if lista_currency[0] == cripto["asset_id_quote"]: #a la que encuentra la información de nuestra moneda dividimos nuestra cantidad por el rate para obtener nuestro valor en euros y lo añadimos en la lista ["ADA",25,55]
-                            a = lista_currency[1] / cripto["rate"]
-                            b = lista_currency.append(a)
+                if data["rates"] != []:
+                    for lista_currency in lista:#recorremos moneda por moneda de las que tenemos
+                        for cripto in data["rates"]: # recorremos las monedas de la solicitud API
+                            if lista_currency[0] == cripto["asset_id_quote"]: #a la que encuentra la información de nuestra moneda dividimos nuestra cantidad por el rate para obtener nuestro valor en euros y lo añadimos en la lista ["ADA",25,55]
+                                a = lista_currency[1] / cripto["rate"]
+                                lista_currency.append(a)
+                
+                else:
+                    self.error = "Verifique la url de llamada a la API"
                             
             elif response.status_code == 400: 
                 self.error = "Solicitud incorrecta: hay algún problema con su solicitud"

@@ -29,7 +29,10 @@ def trading():
         return render_template("purchase.html", form=form, route=request.path, title="Trading")
     elif form.calculate.data:  # si el botón calcular ha sido el pulsado
         if form.validate():# si está bien validado, no solamente por las validaciones del navegador, sinó también por las funciones validadoras que se ejecutan después de pulsar los Submit
-            api.get_rate(form.m_from.data, form.m_to.data, form.q_from.data)#hacemos la llamada a la API
+            try:
+                api.get_rate(form.m_from.data, form.m_to.data, form.q_from.data)#hacemos la llamada a la API
+            except (AttributeError, NameError) as e:
+                api.error = str(e)
             
             if api.error != False:#solo entra si hay contenido en api.error
                 flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
