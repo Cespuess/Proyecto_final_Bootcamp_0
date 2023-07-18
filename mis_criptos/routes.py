@@ -4,7 +4,7 @@ from mis_criptos.models import Movement, CryptosDAOsqlite, Api, Status
 from mis_criptos.forms import CryptoForm
 import sqlite3
 
-dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE_V"))
+dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
 
 @app.route("/")
 def index():

@@ -4,7 +4,7 @@ from wtforms import FloatField, SelectField, SubmitField, HiddenField
 from wtforms.validators import ValidationError, DataRequired
 from mis_criptos.models import CryptosDAOsqlite
 
-daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE_V"))#lo instanciamos en forms para poder hacer consultas en la BD
+daoform = CryptosDAOsqlite(app.config.get("PATH_SQLITE"))#lo instanciamos en forms para poder hacer consultas en la BD
 
 CRYPTOS = [("EUR","EUR"), ("BTC", "BTC"),("ETH", "ETH"), ("USDT","USDT"), ("BNB", "BNB"), ("XRP", "XRP"), ("ADA", "ADA"), ("SOL", "SOL"), ("DOT", "DOT"), ("MATIC", "MATIC")]
 
@@ -52,6 +52,8 @@ class CryptoForm(FlaskForm):
     def validate_m_to(self, field):# al estar dentro de la clase no hace falta llamarla, la ejecuta automáticamente por llamarse validate_  y luego el nombre de la variable
         if self.m_from.data == "EUR" and field.data != "BTC":
             raise ValidationError("Solo puedes comprar BTC con Euros")
+        if self.m_from.data == field.data:
+            raise ValidationError("No puedes comprar la misma moneda")
 
     def validate_q_from(self, field):
         if field.data <= 0:

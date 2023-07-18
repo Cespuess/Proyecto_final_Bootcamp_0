@@ -4,15 +4,15 @@
     --primarioOpaco: rgba(113, 212, 171, 0.5);
     --error: rgb(247, 165, 165);
     --errorOscuro: rgb(245, 53, 53);
-    --fondo: rgb(253, 241, 241);
+    --fondo: rgba(253, 241, 241,0.8);
     
 }
-/*
+
 body{
     background: url(/static/images/cryptos.png) no-repeat;
     background-size: cover;
     background-position: center center;
-}*/
+}
 
 
 
@@ -58,6 +58,8 @@ a.deactivate {
     margin-right:auto;
     width: 50%;
     margin-bottom: 1.5rem;
+    align-items: center;
+    justify-content: center;
     }
 
 .sin-mov p {
@@ -68,19 +70,34 @@ a.deactivate {
     margin: 0;
 }
 
+body{
+    display:flex;
+    flex-direction: column;
+    min-height:100vh; /*establece como altura mínima el 100% de la altura de la pantalla*/
+}
+
+li, main{
+    background-color: var(--fondo);
+    border-radius: 0.5rem;
+}
+
+main {
+    flex-grow:1; /*hace que ocupe todo el espacio disponible y empuja el footer abajo del todo*/
+}
+
 header, footer {
     background-color:var(--primario);
         
-}
-
-footer{
-    margin-bottom:0px;
 }
 
 header p, footer p{
     color:var(--primarioOscuro);
     font-weight: bold;
     font-size: 1.5rem;
+}
+
+footer {
+    margin-top: auto;/* esto lo posiciona al final  del contenedor*/
 }
 
 h1{

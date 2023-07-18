@@ -43,7 +43,6 @@ class Api:
 
             if response.status_code == 200: # pedimos el código de respuesta para estar seguros de que si la petición ha ido bien poder hacer los cálculos necesarios
                 rate = Decimal(data["rate"])
-                print(rate)
                 self.quantity_to = Decimal(self.quantity_from) * rate
                 self.date, self.time = self.get_time(data["time"])
             elif response.status_code == 400: 
