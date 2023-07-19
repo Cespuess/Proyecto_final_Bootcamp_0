@@ -5,7 +5,6 @@
     --error: rgb(247, 165, 165);
     --errorOscuro: rgb(245, 53, 53);
     --fondo: rgba(253, 241, 241,0.8);
-    
 }
 
 body{
@@ -15,7 +14,13 @@ body{
 }
 
 
+nav a{
+    color: var(--primarioOscuro)
+}
 
+a:hover{
+    font-weight: bold;
+}
 
 a.deactivate {
     pointer-events: none;  /*  no ejecuta los eventos del puntero */
@@ -83,10 +88,11 @@ li, main{
 
 main {
     flex-grow:1; /*hace que ocupe todo el espacio disponible y empuja el footer abajo del todo*/
+    margin-bottom: 1rem;
 }
 
 header, footer {
-    background-color:var(--primario);
+    background-image: radial-gradient(circle, var(--primarioOpaco), var(--primario), var(--primarioOscuro))
         
 }
 
@@ -102,4 +108,31 @@ footer {
 
 h1{
     color:var(--primarioOscuro)
+}
+
+/* purchase */
+
+#calculate, #buy{
+    background-color:var(--primario);
+    font-size: 0; /*es para ocultar la etiqueta que le hemos dado al submitField, porque si se le asigna un str vacío no se envía ningún valor (True) asociado con el botón*/
+}
+
+#buy{
+    background-image: url(/static/images/buy.png);
+    background-position: center;
+}
+
+#calculate{
+    height: 80%;
+    background-image: url(/static/images/calculadora.png);
+    background-position: center;
+}
+
+/*status*/
+
+.resumen_wallet p{
+    text-align: right;
+    padding: 0rem 0.5rem 0.1rem;
+    font-weight: bold;
+    color: var(--primarioOscuro)
 }

@@ -3,8 +3,11 @@ from flask import render_template, redirect, request, url_for, flash
 from mis_criptos.models import Movement, CryptosDAOsqlite, Api, Status
 from mis_criptos.forms import CryptoForm
 import sqlite3
+import datetime
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
+api = Api() # instanciamos la clase con toda la info de la petición a la API
+status = Status(dao)
 
 @app.route("/")
 def index():
@@ -25,7 +28,6 @@ def index():
 @app.route("/purchase", methods=["GET", "POST"])# poniendo el methods se habilita el post, porque el get va siempre activado
 def trading():
     form = CryptoForm()# instanciamos la clase del formulario vacío
-    api = Api() # instanciamos la clase con toda la info de la petición a la API
     if request.method == "GET": 
         return render_template("purchase.html", form=form, route=request.path, title="Trading")
     elif form.calculate.data:  # si el botón calcular ha sido el pulsado
@@ -39,13 +41,13 @@ def trading():
                 flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
                 return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
             
-            
+            date_form = datetime.datetime.now()
             form.h_from.data = form.m_from.data #damos el valor correspondiente a los campos ocultos
             form.h_to.data = form.m_to.data
             form.h_q.data = form.q_from.data
             form.h_q_to.data = api.quantity_to
-            form.h_date.data = api.date
-            form.h_time.data = api.time            
+            form.h_date.data = date_form.strftime("%Y-%m-%d")
+            form.h_time.data = date_form.strftime("%X")            
             
             return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
         
@@ -67,7 +69,7 @@ def trading():
 
                     return redirect("/") # nos devuelve a la página inicial que nos muestra los movimientos
                 
-                except ValueError as e: # por si el movimiento no se crea correctamente 
+                except (ValueError, sqlite3.OperationalError) as e: # por si el movimiento no se crea correctamente 
                     flash(str(e))
                     return render_template('purchase.html', form=form, route=request.path,title="Trading")
 
@@ -82,8 +84,7 @@ def trading():
 
 @app.route("/status")
 def wallet():
-    api=Api()
-    status = Status(dao)
+    
     try:
         lista_cantidad=api.get_value_eur(status.get_status())
         

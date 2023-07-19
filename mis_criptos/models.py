@@ -42,9 +42,9 @@ class Api:
             data = response.json()# hemos creado un diccionario con el texto de la respuesta del json
 
             if response.status_code == 200: # pedimos el código de respuesta para estar seguros de que si la petición ha ido bien poder hacer los cálculos necesarios
-                rate = Decimal(data["rate"])
+                rate = Decimal(data["rate"])# utilizamos el módulo Decimal para que nos de el número en decimales y no en notación científica
                 self.quantity_to = Decimal(self.quantity_from) * rate
-                self.date, self.time = self.get_time(data["time"])
+                #self.date, self.time = self.get_time(data["time"])
             elif response.status_code == 400: 
                 self.error = "Solicitud incorrecta: hay algún problema con su solicitud"
             elif response.status_code == 401: 

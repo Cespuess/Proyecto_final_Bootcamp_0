@@ -24,7 +24,7 @@ class CryptoForm(FlaskForm):
     h_time = HiddenField()
 
     calculate = SubmitField("Calcular")
-    buy = SubmitField("Comprar")
+    buy = SubmitField("Compra")
     #hemos creado un formulario con WTForm con los campor requeridos con los validadores y los errores que se muestran al ponerlo mal, sinó podemos nada de mensaje se mostrará uno estándar en inglés. NO OLVIDAR DE IMPORTAR TOT
 
     
