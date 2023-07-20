@@ -1,13 +1,13 @@
 from mis_criptos import app
-from flask import render_template, redirect, request, url_for, flash
-from mis_criptos.models import Movement, CryptosDAOsqlite, Api, Status
+from flask import render_template, redirect, request, flash
+from mis_criptos.models import Movement, CryptosDAOsqlite, Api
 from mis_criptos.forms import CryptoForm
 import sqlite3
 import datetime
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
 api = Api() # instanciamos la clase con toda la info de la petición a la API
-status = Status(dao)
+
 
 @app.route("/")
 def index():
@@ -41,7 +41,7 @@ def trading():
                 flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
                 return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
             
-            date_form = datetime.datetime.now()
+            date_form = datetime.datetime.now()#guardamos en una variable el valor del datatime para luego sacar la fecha y el tiempo
             form.h_from.data = form.m_from.data #damos el valor correspondiente a los campos ocultos
             form.h_to.data = form.m_to.data
             form.h_q.data = form.q_from.data
@@ -58,7 +58,7 @@ def trading():
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 
     else:
-        if form.h_from.data != form.m_from.data or form.h_to.data != form.m_to.data or form.h_q.data != str(form.q_from.data): #si alguno ha sido modificado lanzamos un mensaje de error
+        if form.h_from.data != form.m_from.data or form.h_to.data != form.m_to.data or form.h_q.data != str(form.q_from.data) or form.h_q_to.data != str(api.quantity_to): #si alguno ha sido modificado lanzamos un mensaje de error
             flash("No modifiques los datos del cálculo antes de validar la compra. Vuelve a calcular la operación deseada.")
             return render_template("purchase.html", form=form)
         else: 
@@ -86,7 +86,7 @@ def trading():
 def wallet():
     
     try:
-        lista_cantidad=api.get_value_eur(status.get_status())
+        lista_cantidad=api.get_value_eur(dao.get_status())
         
         if api.error:#solo entra si hay contenido en api.error
                     flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API

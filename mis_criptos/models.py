@@ -1,7 +1,7 @@
 from mis_criptos import app
 import sqlite3
 import requests
-from decimal import Decimal #importamos para que no nos dé el error al comprar pequeñas cantidades ej:0.0000042 evitará que sea 4.2
+from decimal import Decimal #importamos para que no nos dé el error al comprar pequeñas cantidades ej:0.0000042 evitará que sea 4.2e6
 
 CRYPTOS = ["EUR","ADA", "BNB", "BTC", "DOT", "ETH", "MATIC", "SOL", "USDT", "XRP"]
 
@@ -99,11 +99,6 @@ class Api:
             self.error = str(e)
     
 
-    def get_time(self, cadena): # recorremos la cadena para separar fecha y tiempo de la llamada a la API
-        d= cadena[:10]
-        t= cadena[11:19]
-        return d, t
-
 class CryptosDAOsqlite: #data acces object (para guardar los datos)
     def __init__(self, db_path):
         self.path=db_path
@@ -115,7 +110,7 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         "moneda_from"	TEXT NOT NULL,
         "cantidad_from"	REAL NOT NULL,
         "moneda_to"	TEXT NOT NULL,
-        "cantidad_to"	NUMERIC NOT NULL,
+        "cantidad_to"	REAL NOT NULL,
         PRIMARY KEY("id" AUTOINCREMENT)
         )
         """#el if not exist hace que la crea si aún no existe
@@ -176,22 +171,18 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
         conn.close()
         return res
 
-class Status:
-    def __init__(self, dao):
-        self.dao = dao
-
     def get_status(self):#recorremos cada cripto para que nos devuelva una lista de listas con la moneda, valor, de las que dispongamos
         lista_status=[]
         for cripto in CRYPTOS:
             q_to=0
             q_from=0
-            lista_to= self.dao.quantity_to(cripto)
+            lista_to= self.quantity_to(cripto)
             if lista_to == [(None,None)]:
                 pass
             else:
                 q_to += lista_to[0][1]
 
-            lista_from = self.dao.quantity_from(cripto)
+            lista_from = self.quantity_from(cripto)
             if lista_from == [(None,None)]:
                 pass
             else:
@@ -203,6 +194,8 @@ class Status:
                 lista_status.append([cripto,total])
 
         return lista_status
+
+
 
 
 
