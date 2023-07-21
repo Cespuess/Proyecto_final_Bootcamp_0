@@ -30,7 +30,9 @@
                 <div class="resumen_wallet">
                     <p>Valor actual: {{ "%.2f" | format((total|sum)|float) }}€ </p><!--total|sum sumará todos los valores que haya en la tabla-->
                     <p>Precio de compra: {{ "%.2f" | format(euros[0] | float)}}€</p>
-                    <p>Resultado de la inversión: {{ "%.2f" | format(((total|sum) + euros[0]) | float)}}€</p>
+                    <div class="res_inv_container">
+                    <p class="res_inv_t">Resultado de la inversión:</p><p class="res_inv_n" {%if ((total|sum) + euros[0]) < 0%} id="res_neg" {%endif%} >{{ "%.2f" | format(((total|sum) + euros[0]) | float)}}€</p>
+                    </div>
                 </div>
             {% else %}<!--si no hay movimientos mostrará este mensaje-->
             <div class="sin-mov">

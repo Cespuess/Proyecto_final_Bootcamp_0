@@ -9,17 +9,27 @@ dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
 api = Api() # instanciamos la clase con toda la info de la petición a la API
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])#methods para que sepa cuando llega del redirect del purchase
 def index():
+    if request.method == "GET":
+        try:
+            movements= dao.get_all()
+            return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path)#el route lo pasamos para usarlo para desactivar el link del nav, el request.path devuelvela parte de la URL después del nombre de dominio.
+        except (ValueError, sqlite3.OperationalError) as e:
+            flash("Su fichero de datos está corrupto")
+            flash(str(e))
+            return render_template("index.html", movements=[], title="Mis Movimientos")
 
-    try:
-        movements= dao.get_all()
-        return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path)#el route lo pasamos para usarlo para desactivar el link del nav, el request.path devuelvela parte de la URL después del nombre de dominio.
-    except (ValueError, sqlite3.OperationalError) as e:
-        flash("Su fichero de datos está corrupto")
-        flash(str(e))
-        return render_template("index.html", movements=[], title="Mis Movimientos")
-
+    else:
+        try:
+            movements= dao.get_all()#para mandar el mensaje de mov_ok
+            mov_ok=True#para modificar en ninja el id del div de los mensajes flash
+            flash("Compra realizada correctamente")
+            return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path, mov_ok=mov_ok) #el route lo pasamos para usarlo para desactivar el link del nav, el request.path devuelvela parte de la URL después del nombre de dominio.
+        except (ValueError, sqlite3.OperationalError) as e:
+            flash("Su fichero de datos está corrupto")
+            flash(str(e))
+            return render_template("index.html", movements=[], title="Mis Movimientos")
 
 
 
@@ -72,7 +82,7 @@ def trading():
                     m = Movement(date, time, form.m_from.data, form.q_from.data, form.m_to.data, session["quantity_to"])#instanciamos el movimiento para incluirlo en la BD
                     dao.insert(m)# insertamos los datos del objeto recibido por el formulario
 
-                    return redirect("/") # nos devuelve a la página inicial que nos muestra los movimientos
+                    return redirect("/", code=307) # nos devuelve a la página inicial que nos muestra los movimientos, el code 307 envia temporalmente una solicitud POST.
                 
                 except (ValueError, sqlite3.OperationalError) as e: # por si el movimiento no se crea correctamente 
                     flash(str(e))

@@ -21,7 +21,7 @@
         </nav>
         {% with msgs = get_flashed_messages() %}
             {% if msgs %}
-                <div class="container" id="errores">
+                <div class="container"{% if mov_ok %} id="mov_ok" {%else%} id="errores" {%endif%}>
                 {%for msg in msgs %}
                 <p>{{msg}} </p>
                 {% endfor %}
