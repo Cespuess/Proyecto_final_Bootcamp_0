@@ -13,15 +13,7 @@ class CryptoForm(FlaskForm):
 
     m_to = SelectField("To", validators=[DataRequired("Moneda obligatoria")], choices=CRYPTOS)#las choises son lista de tuplas, lo primero será lo que viaja (el value), y lo segundo es lo que se vé
 
-    q_from = FloatField("Cantidad", validators=[DataRequired("Cantidad positiva obligatoria")])
-
-    h_from = HiddenField() # creamos los campos ocultos para poner comparar luego anter de validar
-    h_to = HiddenField()
-    h_q = HiddenField()
-
-    h_q_to = HiddenField()
-    h_date = HiddenField()
-    h_time = HiddenField()
+    q_from = FloatField("Cantidad", validators=[DataRequired("Cantidad positiva obligatoria")]) 
 
     calculate = SubmitField("Calcular")
     buy = SubmitField("Compra")

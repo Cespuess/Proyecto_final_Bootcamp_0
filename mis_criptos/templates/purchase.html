@@ -8,12 +8,7 @@
 
         <form action="/purchase" method="post"><!--el action lo manda a la misma página, así cuando llega con datos se manda a la base de datos, se hace un formulario con el método post para que cree un nuevo dato en la base de datos-->
             {{form.csrf_token}}<!-- es de type="hidden"(oculto) sino está informado no lo pinta, y hay que ponerlo siempre para que viaje el formulario-->
-            {{form.h_from}}
-            {{form.h_to}}
-            {{form.h_q}}
-            {{form.h_q_to}}
-            {{form.h_date}}
-            {{form.h_time}}
+            
 
             <div class="grid">
                 <div>
@@ -31,8 +26,8 @@
                      {{ form.calculate }}
                 </div>
                 <div>
-                    <p>Conversión: {% if form.calculate.data and form.h_q_to.data != "" %}
-                        {%if form.m_to.data == "EUR" %} {{ "%.2f"| format(form.h_q_to.data)}}€ {% else %} {{ form.h_q_to.data}} {{form.m_to.data}} {%endif%} {%endif%}</p>
+                    <p>Conversión: {% if session["quantity_to"] != "" %}
+                        {%if form.m_to.data == "EUR" %} {{ "%.2f"| format(session["quantity_to"])}}€ {% else %} {{ session["quantity_to"]}} {{form.m_to.data}} {%endif%} {%endif%}</p>
                 </div>
             </div>
             <div>

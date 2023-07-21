@@ -1,5 +1,5 @@
 from mis_criptos import app
-from flask import render_template, redirect, request, flash
+from flask import render_template, redirect, request, flash, session
 from mis_criptos.models import Movement, CryptosDAOsqlite, Api
 from mis_criptos.forms import CryptoForm
 import sqlite3
@@ -29,6 +29,8 @@ def index():
 def trading():
     form = CryptoForm()# instanciamos la clase del formulario vacío
     if request.method == "GET": 
+        session["verification"]=[]#se crea una lista vacía para borrar los datos del cálculo anterior
+        session["quantity_to"]="" #para que no nos dé problemas jinja
         return render_template("purchase.html", form=form, route=request.path, title="Trading")
     elif form.calculate.data:  # si el botón calcular ha sido el pulsado
         if form.validate():# si está bien validado, no solamente por las validaciones del navegador, sinó también por las funciones validadoras que se ejecutan después de pulsar los Submit
@@ -41,30 +43,33 @@ def trading():
                 flash(api.error)# capturamos el error que se haya podido procucir en la llamada a la API
                 return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
             
-            date_form = datetime.datetime.now()#guardamos en una variable el valor del datatime para luego sacar la fecha y el tiempo
-            form.h_from.data = form.m_from.data #damos el valor correspondiente a los campos ocultos
-            form.h_to.data = form.m_to.data
-            form.h_q.data = form.q_from.data
-            form.h_q_to.data = api.quantity_to
-            form.h_date.data = date_form.strftime("%Y-%m-%d")
-            form.h_time.data = date_form.strftime("%X")            
-            
-            return render_template('purchase.html', form=form, route=request.path,title="Trading", api=api)
+            #metemos todos los datos en las sessions para luego compararlos
+            session["verification"] = [form.m_from.data, form.m_to.data, form.q_from.data, api.quantity_to]                    
+            session["quantity_to"] = api.quantity_to
+            return render_template('purchase.html', form=form, route=request.path,title="Trading")
         
         else:
             for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
                 flash(msg[0])#los grabamos uno x uno en flash
-            form.h_q_to.data = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
+            session["quantity_to"] = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 
     else:
-        if form.h_from.data != form.m_from.data or form.h_to.data != form.m_to.data or form.h_q.data != str(form.q_from.data) or form.h_q_to.data != str(api.quantity_to): #si alguno ha sido modificado lanzamos un mensaje de error
-            flash("No modifiques los datos del cálculo antes de validar la compra. Vuelve a calcular la operación deseada.")
-            return render_template("purchase.html", form=form)
+        if session["verification"] != [form.m_from.data, form.m_to.data, form.q_from.data, session["quantity_to"]]: #si alguno ha sido modificado lanzamos un mensaje de error
+            if session["quantity_to"] == "":#por si clica en comprar antes de calcular la conversión
+                flash("Calcula la conversión antes de realizar una compra.")
+                return render_template("purchase.html", form=form)
+            else:
+                flash("No modifiques los datos del cálculo antes de validar la compra. Vuelve a calcular la operación deseada.")
+                session["quantity_to"] = ""#lo reiniciamos para que no se refleje en la pantalla el valor hecho antes 
+                return render_template("purchase.html", form=form)
         else: 
             if form.validate():
                 try:
-                    m = Movement(form.h_date.data, form.h_time.data, form.m_from.data, form.q_from.data, form.m_to.data, form.h_q_to.data)#instanciamos el movimiento para incluirlo en la BD
+                    date_form = datetime.datetime.now()#guardamos en una variable el valor del datatime para luego sacar la fecha y el tiempo
+                    date = date_form.strftime("%Y-%m-%d")
+                    time = date_form.strftime("%X")
+                    m = Movement(date, time, form.m_from.data, form.q_from.data, form.m_to.data, session["quantity_to"])#instanciamos el movimiento para incluirlo en la BD
                     dao.insert(m)# insertamos los datos del objeto recibido por el formulario
 
                     return redirect("/") # nos devuelve a la página inicial que nos muestra los movimientos
