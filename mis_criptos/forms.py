@@ -1,6 +1,6 @@
 from mis_criptos import app
 from flask_wtf import FlaskForm
-from wtforms import FloatField, SelectField, SubmitField, HiddenField
+from wtforms import FloatField, SelectField, SubmitField
 from wtforms.validators import ValidationError, DataRequired
 from mis_criptos.models import CryptosDAOsqlite
 
