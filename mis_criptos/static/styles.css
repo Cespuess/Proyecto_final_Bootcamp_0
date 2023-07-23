@@ -43,7 +43,7 @@ a.deactivate {
 
 
 
-#errores {
+#errores, #errores-form {
     display: flex;   
     flex-direction: column; 
     justify-content: center;
@@ -51,8 +51,10 @@ a.deactivate {
     background-color: var(--error);
     border: 0.3rem double var(--errorOscuro);
     border-radius: 0.5rem; 
+    color: var(--errorOscuro)
     
 }
+
 
 #errores p {
     color: var(--errorOscuro);

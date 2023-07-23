@@ -12,15 +12,15 @@
 
             <div class="grid">
                 <div>
-                {{ form.m_from.label }} {{ form.m_from }} 
+                    {{ form_field(form.m_from)}} <!--aqui ponemos los macros-->
                 </div>
                 <div>
-                    {{ form.m_to.label}} {{ form.m_to }}
+                    {{ form_field(form.m_to)}}
                 </div>
             </div>
             <div class="grid">
                 <div>
-                    {{ form.q_from.label }}   {{ form.q_from }}
+                    {{ form_field(form.q_from)}}
                 </div>            
                 <div>
                      {{ form.calculate }}

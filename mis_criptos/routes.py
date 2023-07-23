@@ -59,8 +59,6 @@ def trading():
             return render_template('purchase.html', form=form, route=request.path,title="Trading")
         
         else:
-            for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
-                flash(msg[0])#los grabamos uno x uno en flash
             session["quantity_to"] = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 

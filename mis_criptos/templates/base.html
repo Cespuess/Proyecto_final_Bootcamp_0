@@ -1,3 +1,13 @@
+{% macro form_field(field) %}  <!--definimos el macro que vamos a utilizar para el purchase.html-->
+    {{ field.label }}
+    {{ field }}
+    {% if field.errors %}
+        {% for msg in field.errors %}
+        <p id="errores-form">{{msg}}</p>
+        {%endfor%}
+    {%endif%}
+{%endmacro%}
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
