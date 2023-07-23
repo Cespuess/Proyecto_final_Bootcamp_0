@@ -125,6 +125,14 @@ h1{
     color:var(--primarioOscuro)
 }
 
+th, td{
+    text-align: center;
+}
+
+.pu{
+    text-align: right;
+}
+
 
 
 

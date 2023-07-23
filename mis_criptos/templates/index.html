@@ -24,8 +24,8 @@
                 <td>{{ movement.moneda_from }}</td>
                 <td>{{ movement.cantidad_from }}</td>
                 <td>{{ movement.moneda_to }}</td>
-                <td>{{ movement.cantidad_to }}</td>
-                <td>{% if movement.moneda_from == "EUR" %} {% if (movement.cantidad_from / movement.cantidad_to).is_integer() %}  {{ (movement.cantidad_from / movement.cantidad_to)| int }} {% else %} {{ "%.2f" | format((movement.cantidad_from / movement.cantidad_to)| float )}} {% endif %} € {% else %} {{ movement.cantidad_from / movement.cantidad_to }} {{ movement.moneda_from }} {% endif %}</td><!--esto es para mostrar en símbolo € con solo los decimales -->
+                <td class="pu">{{ movement.cantidad_to }}</td>
+                <td class="pu">{% if movement.moneda_from == "EUR" %} {% if (movement.cantidad_from / movement.cantidad_to).is_integer() %}  {{ (movement.cantidad_from / movement.cantidad_to)| int }} {% else %} {{ "%.2f" | format((movement.cantidad_from / movement.cantidad_to)| float )}} {% endif %} € {% else %} {{ movement.cantidad_from / movement.cantidad_to }} {{ movement.moneda_from }} {% endif %}</td><!--esto es para mostrar en símbolo € con solo los decimales -->
             </tr>
             {% endfor %}
         </table>
