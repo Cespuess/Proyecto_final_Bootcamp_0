@@ -3,7 +3,7 @@ from flask import render_template, redirect, request, flash, session
 from mis_criptos.models import Movement, CryptosDAOsqlite, Api
 from mis_criptos.forms import CryptoForm
 import sqlite3
-import datetime
+from datetime import datetime
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
 api = Api() # instanciamos la clase con toda la info de la petición a la API
@@ -56,6 +56,7 @@ def trading():
             #metemos todos los datos en las sessions para luego compararlos
             session["verification"] = [form.m_from.data, form.m_to.data, form.q_from.data, api.quantity_to]                    
             session["quantity_to"] = api.quantity_to
+            session["time_calculate"] = datetime.now()
             return render_template('purchase.html', form=form, route=request.path,title="Trading")
         
         else:
@@ -63,7 +64,11 @@ def trading():
             return render_template("purchase.html", form=form, route=request.path, title="Trading")
 
     else:
-        if session["verification"] != [form.m_from.data, form.m_to.data, form.q_from.data, session["quantity_to"]]: #si alguno ha sido modificado lanzamos un mensaje de error
+        if dao.dos_minutos(session["time_calculate"]):#si pasan más de dos minutos entre el cálculo y la compra salta este error.
+            flash("Han pasado más de dos minutos, vuelve a calcular la conversión.")
+            session["quantity_to"] = "" 
+            return render_template("purchase.html", form=form)
+        elif session["verification"] != [form.m_from.data, form.m_to.data, form.q_from.data, session["quantity_to"]]: #si alguno ha sido modificado lanzamos un mensaje de error
             if session["quantity_to"] == "":#por si clica en comprar antes de calcular la conversión
                 flash("Calcula la conversión antes de realizar una compra.")
                 return render_template("purchase.html", form=form)
@@ -74,7 +79,7 @@ def trading():
         else: 
             if form.validate():
                 try:
-                    date_form = datetime.datetime.now()#guardamos en una variable el valor del datatime para luego sacar la fecha y el tiempo
+                    date_form = session["time_calculate"]#guardamos en una variable el valor del datatime para luego sacar la fecha y el tiempo
                     date = date_form.strftime("%Y-%m-%d")
                     time = date_form.strftime("%X")
                     m = Movement(date, time, form.m_from.data, form.q_from.data, form.m_to.data, session["quantity_to"])#instanciamos el movimiento para incluirlo en la BD

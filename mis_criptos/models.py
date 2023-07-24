@@ -1,7 +1,8 @@
 from mis_criptos import app
 import sqlite3
 import requests
-from decimal import Decimal #importamos para que no nos dé el error al comprar pequeñas cantidades ej:0.0000042 evitará que sea 4.2e6
+from decimal import Decimal #importamos para que no nos dé el exponencial al comprar pequeñas cantidades ej:0.0000042 evitará que sea 4.2e6
+from datetime import datetime, timedelta
 
 CRYPTOS = ["EUR","ADA", "BNB", "BTC", "DOT", "ETH", "MATIC", "SOL", "USDT", "XRP"]
 
@@ -195,6 +196,17 @@ class CryptosDAOsqlite: #data acces object (para guardar los datos)
 
         return lista_status
 
+    def dos_minutos(self, antes):
+        ahora = datetime.now()
+        antes_sin_micro=antes.replace(tzinfo=None)#instanciandolos igual uno nos incluye el tzinfo en los parámetros y el otro los microsegundos, y luego al hacer el cálculo nos peta
+        ahora_sin_micro= ahora.replace(microsecond=0)
+
+        diferencia=ahora_sin_micro - antes_sin_micro
+        dos_minutos=timedelta(minutes=2)
+        if diferencia > dos_minutos:
+            return True
+        else:
+            return False
 
 
 
