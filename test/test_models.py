@@ -1,6 +1,5 @@
-import pytest
 from mis_criptos.models import Movement, CryptosDAOsqlite
-import sqlite3
+from datetime import datetime, timezone
 
 
 def test_create_movement():
@@ -11,3 +10,15 @@ def test_create_movement():
     assert m.cantidad_from == 1000
     assert m.moneda_to == "BTC"
     assert m.cantidad_to == 0.6
+
+def test_mas_dos_minutos():
+    antes = datetime(2023,7,25,13,20,35, tzinfo=timezone.utc)
+    dao = CryptosDAOsqlite("data/hola.db")
+
+    assert dao.dos_minutos(antes) == True
+
+def test_menos_dos_minutos():
+    antes = datetime(2023,7,25,21,12,35, tzinfo=timezone.utc)
+    dao = CryptosDAOsqlite("data/hola.db")
+
+    assert dao.dos_minutos(antes) == False 

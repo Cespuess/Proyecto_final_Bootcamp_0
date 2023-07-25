@@ -3,7 +3,7 @@ from flask import render_template, redirect, request, flash, session
 from mis_criptos.models import Movement, CryptosDAOsqlite, Api
 from mis_criptos.forms import CryptoForm
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
 api = Api() # instanciamos la clase con toda la info de la petición a la API
@@ -56,7 +56,7 @@ def trading():
             #metemos todos los datos en las sessions para luego compararlos
             session["verification"] = [form.m_from.data, form.m_to.data, form.q_from.data, api.quantity_to]                    
             session["quantity_to"] = api.quantity_to
-            session["time_calculate"] = datetime.now()
+            session["time_calculate"] = datetime.now(timezone.utc)
             return render_template('purchase.html', form=form, route=request.path,title="Trading")
         
         else:
