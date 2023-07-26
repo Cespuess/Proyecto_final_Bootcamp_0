@@ -31,7 +31,7 @@ Se utiliza coinAPI.io como servicio para calcular el valor actual de cada cripto
     - FLASK_DEBUG: en entornos de producción debe ser False, si se va a modificar la aplicación es más cómodo True
     - FLASK_SECRET_KEY: introducir una clave secreta cualquiera. Una buena web para generarlas es [randomkeygen](https://randomkeygen.com).
     - FLASK_PATH_SQLITE: Aquí pondremos el path del fichero sqlite donde se grabarán los movimientos, o si se desea dejar como está.
-    - FLASK_API_KEY: la apikey de coinAPI.io que habremos obtenido más [arriba](#servicios-externos). 
+    - FLASK_API_KEY: la apikey de coinAPI.io que habremos obtenido más [arriba](#servicios-externos).
 
 ## Ejecución de la aplicación
 

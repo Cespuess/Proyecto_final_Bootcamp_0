@@ -6,10 +6,10 @@ import sqlite3
 from datetime import datetime, timezone
 
 dao=CryptosDAOsqlite(app.config.get("PATH_SQLITE"))
-api = Api() # instanciamos la clase con toda la info de la petición a la API
+api = Api() # instanciamos la clase de la petición a la API
 
 
-@app.route("/", methods=["GET", "POST"])#methods para que sepa cuando llega del redirect del purchase
+@app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
         try:
@@ -23,9 +23,9 @@ def index():
     else:
         try:
             movements= dao.get_all()#para mandar el mensaje de mov_ok
-            mov_ok=True#para modificar en ninja el id del div de los mensajes flash
+            mov_ok=True#para modificar en jinja el id del div de los mensajes flash
             flash("Compra realizada correctamente")
-            return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path, mov_ok=mov_ok) #el route lo pasamos para usarlo para desactivar el link del nav, el request.path devuelvela parte de la URL después del nombre de dominio.
+            return render_template("index.html", movements=movements, title="Mis movimientos", route=request.path, mov_ok=mov_ok) 
         except (ValueError, sqlite3.OperationalError) as e:
             flash("Su fichero de datos está corrupto")
             flash(str(e))
@@ -67,7 +67,7 @@ def trading():
         if dao.dos_minutos(session["time_calculate"]):#si pasan más de dos minutos entre el cálculo y la compra salta este error.
             flash("Han pasado más de dos minutos, vuelve a calcular la conversión.")
             session["quantity_to"] = "" 
-            return render_template("purchase.html", form=form)
+            return render_template("purchase.html", form=form, route=request.path, title="Trading")
         elif session["verification"] != [form.m_from.data, form.m_to.data, form.q_from.data, session["quantity_to"]]: #si alguno ha sido modificado lanzamos un mensaje de error
             if session["quantity_to"] == "":#por si clica en comprar antes de calcular la conversión
                 flash("Calcula la conversión antes de realizar una compra.")
@@ -87,14 +87,14 @@ def trading():
 
                     return redirect("/", code=307) # nos devuelve a la página inicial que nos muestra los movimientos, el code 307 envia temporalmente una solicitud POST.
                 
-                except (ValueError, sqlite3.OperationalError) as e: # por si el movimiento no se crea correctamente 
+                except (ValueError, sqlite3.OperationalError) as e: # por si el movimiento no se crea correctamente o se ha manipulado la llamada a la BD
                     flash(str(e))
                     return render_template('purchase.html', form=form, route=request.path,title="Trading")
 
             else:
                 for msg in form.errors.values():#recorremos el diccionario que contiene los diferentes errores
                     flash(msg[0])#los grabamos uno x uno en flash
-                form.h_q_to.data = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
+                session["quantity_to"] = ""#al no hacer el cálculo de la q_to por cualquier error borramos el dato que había de un posible cálculo correcto anterior para que no aparezca más
                 return render_template("purchase.html", form=form, route=request.path, title="Trading")
                 
 
@@ -112,6 +112,6 @@ def wallet():
         
         return render_template("status.html", route=request.path, title="Wallet", lista=lista_cantidad, error = False)
     
-    except (AttributeError, sqlite3.OperationalError) as e:#controlamos errores generados por el usuario cabrón
+    except (AttributeError, sqlite3.OperationalError, NameError) as e:#controlamos errores generados por el usuario malvado
         flash(str(e))
         return render_template("status.html", route=request.path, title="Wallet", error=True)

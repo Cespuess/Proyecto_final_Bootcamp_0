@@ -34,7 +34,7 @@ a.deactivate {
     background-color: var(--primarioOpaco);
     border: solid 0.1rem var(--primarioOscuro);
     border-radius: 0.5rem;
-    -webkit-box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
+    -webkit-box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96); /*el código de la sombra sacado de una página que genera sombras*/
     -moz-box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
     box-shadow: 14px -10px 38px -7px rgba(113,212,171,0.96);
     height: 65px;
